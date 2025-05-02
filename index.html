@@ -19,14 +19,9 @@
 
   <section class="portfolio">
     <h2>My Crypto Portfolio</h2>
-    <table id="cryptoTable">
-      <thead>
-        <tr><th>Coin Name</th><th>Quantity</th><th>Value (PHP)</th></tr>
-      </thead>
-      <tbody>
-        <tr id="loadingRow"><td colspan="3">Loading data...</td></tr>
-      </tbody>
-    </table>
+    <div id="cryptoData">
+      <p>Loading data...</p>
+    </div>
   </section>
 
   <footer>
@@ -36,7 +31,7 @@
   <script>
     // Google Sheets API URL setup
     const sheetId = '1Plywb7kmzQ8adg0EpmP2-c9IdQc68m5fEcs0smk0mos';
-    const sheetName = 'Holdings Summary';  // Updated sheet name
+    const sheetName = 'Holdings Summary';  // Sheet name
     const apiUrl = https://opensheet.elk.sh/${sheetId}/${encodeURIComponent(sheetName)};
 
     // Fetch data from Google Sheets using OpenSheet API
@@ -48,24 +43,20 @@
         return response.json();
       })
       .then(data => {
-        const tbody = document.querySelector('#cryptoTable tbody');
-        tbody.innerHTML = ''; // Clear the loading row
+        const cryptoDataDiv = document.querySelector('#cryptoData');
+        cryptoDataDiv.innerHTML = ''; // Clear loading text
 
-        // Loop through the data and create table rows
+        // Loop through the data and create divs for E1 column data
         data.forEach(row => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${row['Coin Name']}</td>
-            <td>${row['Quantity']}</td>
-            <td>${row['Value (PHP)']}</td>
-          `;
-          tbody.appendChild(tr);
+          const div = document.createElement('div');
+          // Assuming E1 column is the specific column you need, adjust accordingly
+          div.innerHTML = row['E1'] || 'No data available';
+          cryptoDataDiv.appendChild(div);
         });
       })
       .catch(error => {
         console.error('Fetch error:', error);
-        document.querySelector('#cryptoTable tbody').innerHTML =
-          '<tr><td colspan="3">Failed to load data.</td></tr>';
+        document.querySelector('#cryptoData').innerHTML = 'Failed to load data.';
       });
   </script>
 </body>
