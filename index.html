@@ -25,7 +25,8 @@
           <tr>
             <th>Coin</th>
             <th>Quantity</th>
-            <th>Value (PHP)</th>
+            <th>Market Value (PHP)</th>
+            <th>Average Price (PHP)</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -67,6 +68,7 @@
         <td contenteditable="true">${coin}</td>
         <td contenteditable="true">${quantity}</td>
         <td contenteditable="true">${value}</td>
+        <td class="average-price">${calculateAveragePrice(quantity, value)}</td>
         <td><button onclick="deleteRow(this)">Delete</button></td>
       `;
       tableBody.appendChild(row);
@@ -78,6 +80,12 @@
 
     function deleteRow(btn) {
       btn.closest('tr').remove();
+      saveTable(); // Re-save the table after delete
+    }
+
+    function calculateAveragePrice(quantity, value) {
+      if (!quantity || !value || quantity <= 0) return 'N/A';
+      return (value / quantity).toFixed(2); // Returns the average price with 2 decimals
     }
 
     function saveTable() {
@@ -89,7 +97,7 @@
         data.push({
           coin: cells[0].innerText.trim(),
           quantity: cells[1].innerText.trim(),
-          value: cells[2].innerText.trim()
+          value: cells[2].innerText.trim(),
         });
       });
 
