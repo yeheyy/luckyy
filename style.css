@@ -9,7 +9,7 @@ body {
   font-family: 'Segoe UI', Tahoma, sans-serif;
   background-color: #f5f7fa;
   color: #333;
-  padding-bottom: 60px;
+  padding-bottom: 80px;
 }
 
 header {
@@ -27,18 +27,41 @@ header p {
   font-size: 1.2rem;
 }
 
-.about, .portfolio {
-  background-color: white;
+.tabs {
+  display: flex;
+  justify-content: center;
+  background-color: #e0e0e0;
+  padding: 10px 0;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-button.active {
+  border-color: #007BFF;
+  color: #007BFF;
+  font-weight: bold;
+}
+
+.tab-content {
+  display: none;
   padding: 20px;
   max-width: 900px;
-  margin: 30px auto;
+  margin: 0 auto;
+  background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.about h2, .portfolio h2 {
-  font-size: 2rem;
-  margin-bottom: 15px;
+.tab-content.active {
+  display: block;
 }
 
 .table-container {
@@ -71,7 +94,7 @@ button {
   background-color: #007BFF;
   color: white;
   padding: 10px 15px;
-  margin-right: 10px;
+  margin: 5px 5px 10px 0;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -99,13 +122,10 @@ footer {
   }
 
   th, td {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   button {
-    margin: 5px 0;
     width: 100%;
   }
 }
-Sent
-Write to
