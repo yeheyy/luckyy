@@ -6,13 +6,12 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: #f5f7fa;
   color: #333;
   padding-bottom: 60px;
 }
 
-/* Header */
 header {
   background-color: #007BFF;
   color: white;
@@ -22,21 +21,19 @@ header {
 
 header h1 {
   font-size: 2.5rem;
-  margin-bottom: 10px;
 }
 
 header p {
   font-size: 1.2rem;
 }
 
-/* Sections */
 .about, .portfolio {
   background-color: white;
   padding: 20px;
   max-width: 900px;
   margin: 30px auto;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .about h2, .portfolio h2 {
@@ -44,7 +41,6 @@ header p {
   margin-bottom: 15px;
 }
 
-/* Table Styles */
 .table-container {
   overflow-x: auto;
 }
@@ -52,12 +48,13 @@ header p {
 table {
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
+  margin-bottom: 15px;
 }
 
 th, td {
-  padding: 12px 16px;
   border: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: center;
 }
 
 th {
@@ -65,11 +62,27 @@ th {
   color: white;
 }
 
-td {
-  background-color: #fefefe;
+td[contenteditable="true"] {
+  background-color: #fdfdfd;
+  cursor: text;
 }
 
-/* Footer */
+button {
+  background-color: #007BFF;
+  color: white;
+  padding: 10px 15px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
 footer {
   background-color: #333;
   color: white;
@@ -80,18 +93,17 @@ footer {
   width: 100%;
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   header h1 {
     font-size: 2rem;
   }
 
-  .about, .portfolio {
-    margin: 15px;
-    padding: 15px;
-  }
-
   th, td {
     font-size: 0.95rem;
+  }
+
+  button {
+    margin: 5px 0;
+    width: 100%;
   }
 }
