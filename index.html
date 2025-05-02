@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mark's Crypto Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Mark's Portfolio</h1>
+    <p>Crypto investor & enthusiast</p>
+  </header>
+
+  <section class="about">
+    <h2>About Me</h2>
+    <p>Hi! I'm Mark. Welcome to my personal portfolio where I track my crypto assets live from Google Sheets.</p>
+  </section>
+
+  <section class="portfolio">
+    <h2>My Crypto Portfolio</h2>
+    <table id="crypto-table">
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>Quantity</th>
+          <th>Value (PHP)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="3">Loading data...</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p>Contact me at wakitv89@gmail.com</p>
+  </footer>
+
+  <script>
+    fetch("https://opensheet.elk.sh/1Plywb7kmzQ8adg0EpmP2-c9IdQc68m5fEcs0smk0mos/1")
+      .then(response => response.json())
+      .then(data => {
+        const tbody = document.querySelector("#crypto-table tbody");
+        tbody.innerHTML = "";
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.Coin}</td>
+            <td>${row.Quantity}</td>
+            <td>₱${parseFloat(row.Value).toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(error => {
+        document.querySelector("#crypto-table tbody").innerHTML = <tr><td colspan="3">Error loading data</td></tr>;
+        console.error("Error fetching data:", error);
+      });
+  </script>
+</body>
+</html>
