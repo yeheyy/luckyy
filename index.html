@@ -34,10 +34,12 @@
   </footer>
 
   <script>
+    // Google Sheets API URL setup
     const sheetId = '1Plywb7kmzQ8adg0EpmP2-c9IdQc68m5fEcs0smk0mos';
-    const sheetName = 'Holdings Summary';  // Make sure to use your correct sheet name
+    const sheetName = 'Holdings Summary';  // Updated sheet name
     const apiUrl = https://opensheet.elk.sh/${sheetId}/${encodeURIComponent(sheetName)};
 
+    // Fetch data from Google Sheets using OpenSheet API
     fetch(apiUrl)
       .then(response => {
         if (!response.ok) {
@@ -49,9 +51,9 @@
         const tbody = document.querySelector('#cryptoTable tbody');
         tbody.innerHTML = ''; // Clear the loading row
 
+        // Loop through the data and create table rows
         data.forEach(row => {
           const tr = document.createElement('tr');
-          // Match the exact column headers
           tr.innerHTML = `
             <td>${row['Coin Name']}</td>
             <td>${row['Quantity']}</td>
