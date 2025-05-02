@@ -1,131 +1,82 @@
 {
 
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
-
 body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  background-color: #f5f7fa;
-  color: #333;
+  font-family: sans-serif;
+  margin: 0;
   padding-bottom: 80px;
+  background: #f2f5f8;
 }
-
 header {
-  background-color: #007BFF;
-  color: white;
-  padding: 30px 20px;
+  background: #007BFF;
+  color: #fff;
+  padding: 20px;
   text-align: center;
 }
-
-header h1 {
-  font-size: 2.5rem;
-}
-
-header p {
-  font-size: 1.2rem;
-}
-
 .tabs {
   display: flex;
   justify-content: center;
-  background-color: #e0e0e0;
-  padding: 10px 0;
+  background: #eee;
 }
-
 .tab-button {
-  background: none;
-  border: none;
   padding: 10px 20px;
-  margin: 0 10px;
-  font-size: 1rem;
+  border: none;
+  background: none;
   cursor: pointer;
-  border-bottom: 3px solid transparent;
-}
-
-.tab-button.active {
-  border-color: #007BFF;
-  color: #007BFF;
   font-weight: bold;
 }
-
+.tab-button.active {
+  color: #007BFF;
+  border-bottom: 3px solid #007BFF;
+}
 .tab-content {
   display: none;
   padding: 20px;
   max-width: 900px;
-  margin: 0 auto;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  margin: auto;
+  background: white;
+  border-radius: 6px;
 }
-
 .tab-content.active {
   display: block;
 }
-
-.table-container {
-  overflow-x: auto;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 15px;
 }
-
 th, td {
-  border: 1px solid #ddd;
-  padding: 12px 15px;
+  border: 1px solid #ccc;
+  padding: 10px;
   text-align: center;
 }
-
-th {
-  background-color: #007BFF;
-  color: white;
-}
-
 td[contenteditable="true"] {
-  background-color: #fdfdfd;
-  cursor: text;
+  background: #fcfcfc;
 }
-
 button {
-  background-color: #007BFF;
-  color: white;
-  padding: 10px 15px;
-  margin: 5px 5px 10px 0;
+  padding: 8px 15px;
+  margin-right: 8px;
+  background: #007BFF;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-footer {
-  background-color: #333;
   color: white;
-  text-align: center;
-  padding: 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background: #0056b3;
+}
+footer {
   position: fixed;
   bottom: 0;
   width: 100%;
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 10px;
 }
-
 @media (max-width: 600px) {
-  header h1 {
-    font-size: 2rem;
-  }
-
-  th, td {
+  table, th, td {
     font-size: 0.9rem;
-  }
-
-  button {
-    width: 100%;
   }
 }
