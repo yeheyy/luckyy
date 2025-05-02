@@ -93,18 +93,6 @@ footer {
   width: 100%;
 }
 
-.total-average {
-  margin-top: 20px;
-  font-size: 1.5rem;
-  text-align: center;
-  color: #333;
-}
-
-.total-average h3 {
-  font-size: 1.8rem;
-  font-weight: bold;
-}
-
 @media (max-width: 600px) {
   header h1 {
     font-size: 2rem;
@@ -119,3 +107,5 @@ footer {
     width: 100%;
   }
 }
+Sent
+Write to
