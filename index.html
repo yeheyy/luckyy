@@ -36,6 +36,9 @@
       <button onclick="saveTable()">Save</button>
       <button onclick="clearTable()">Clear</button>
     </div>
+    <div class="total-average">
+      <h3>Total Average Price (PHP): <span id="totalAveragePrice">0.00</span></h3>
+    </div>
   </section>
 
   <footer>
@@ -58,6 +61,7 @@
         insertRow('ETH', '0.1', '12000');
         insertRow('SOL', '10', '7500');
       }
+      updateTotalAveragePrice();
     }
 
     function insertRow(coin = '', quantity = '', value = '') {
@@ -81,11 +85,32 @@
     function deleteRow(btn) {
       btn.closest('tr').remove();
       saveTable(); // Re-save the table after delete
+      updateTotalAveragePrice();
     }
 
     function calculateAveragePrice(quantity, value) {
       if (!quantity || !value || quantity <= 0) return 'N/A';
       return (value / quantity).toFixed(2); // Returns the average price with 2 decimals
+    }
+
+    function updateTotalAveragePrice() {
+      const rows = document.querySelectorAll('#portfolioTable tbody tr');
+      let totalQuantity = 0;
+      let totalMarketValue = 0;
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const quantity = parseFloat(cells[1].innerText.trim());
+        const value = parseFloat(cells[2].innerText.trim());
+        
+        if (!isNaN(quantity) && !isNaN(value)) {
+          totalQuantity += quantity;
+          totalMarketValue += value;
+        }
+      });
+
+      const totalAveragePrice = totalMarketValue / totalQuantity;
+      document.getElementById('totalAveragePrice').innerText = totalAveragePrice.toFixed(2);
     }
 
     function saveTable() {
