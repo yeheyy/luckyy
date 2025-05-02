@@ -14,47 +14,43 @@
 
   <section class="about">
     <h2>About Me</h2>
-    <p>Hi! I'm Mark. Welcome to my personal portfolio where I track my crypto assets live from Google Sheets.</p>
+    <p>Hi! I'm Mark. Welcome to my personal portfolio where I manually track my crypto assets.</p>
   </section>
 
   <section class="portfolio">
-    <h2>My Crypto Portfolio</h2>
-    <div id="cryptoData">
-      <p>Loading data...</p>
+    <h2>My Crypto Holdings</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Coin</th>
+            <th>Quantity</th>
+            <th>Value (PHP)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>BTC</td>
+            <td>0.005</td>
+            <td>₱18,000</td>
+          </tr>
+          <tr>
+            <td>ETH</td>
+            <td>0.1</td>
+            <td>₱12,000</td>
+          </tr>
+          <tr>
+            <td>SOL</td>
+            <td>10</td>
+            <td>₱7,500</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
   <footer>
     <p>Contact me at wakitv89@gmail.com</p>
   </footer>
-
-  <script>
-    const sheetId = '1Plywb7kmzQ8adg0EpmP2-c9IdQc68m5fEcs0smk0mos';
-    const sheetName = 'Holdings Summary';
-    const apiUrl = https://opensheet.elk.sh/${sheetId}/${encodeURIComponent(sheetName)};
-
-    fetch(apiUrl)
-      .then(response => {
-        if (!response.ok) throw new Error(HTTP error! status: ${response.status});
-        return response.json();
-      })
-      .then(data => {
-        const cryptoDataDiv = document.querySelector('#cryptoData');
-        cryptoDataDiv.innerHTML = '';
-
-        data.forEach(row => {
-          const value = row['Total in PHP']; // change this based on your E1 header
-          if (value) {
-            const div = document.createElement('div');
-            div.innerHTML = ₱ ${parseFloat(value).toLocaleString()};
-            cryptoDataDiv.appendChild(div);
-          }
-        });
-      })
-      .catch(error => {
-        console.error('Fetch error:', error);
-        document.querySelector('#cryptoData').innerHTML = 'Failed to load data.';
-      });
-  </script>
 </body>
 </html>
