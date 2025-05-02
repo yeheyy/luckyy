@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mark's Crypto Portfolio</title>
+  <title>Mark's Editable Crypto Portfolio</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,43 +14,97 @@
 
   <section class="about">
     <h2>About Me</h2>
-    <p>Hi! I'm Mark. Welcome to my personal portfolio where I manually track my crypto assets.</p>
+    <p>Hi! I'm Mark. Welcome to my editable crypto portfolio. You can update your assets directly on this page!</p>
   </section>
 
   <section class="portfolio">
     <h2>My Crypto Holdings</h2>
     <div class="table-container">
-      <table>
+      <table id="portfolioTable">
         <thead>
           <tr>
             <th>Coin</th>
             <th>Quantity</th>
             <th>Value (PHP)</th>
+            <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>BTC</td>
-            <td>0.005</td>
-            <td>₱18,000</td>
-          </tr>
-          <tr>
-            <td>ETH</td>
-            <td>0.1</td>
-            <td>₱12,000</td>
-          </tr>
-          <tr>
-            <td>SOL</td>
-            <td>10</td>
-            <td>₱7,500</td>
-          </tr>
-        </tbody>
+        <tbody></tbody>
       </table>
+      <button onclick="addRow()">Add Asset</button>
+      <button onclick="saveTable()">Save</button>
+      <button onclick="clearTable()">Clear</button>
     </div>
   </section>
 
   <footer>
     <p>Contact me at wakitv89@gmail.com</p>
   </footer>
+
+  <script>
+    function loadTable() {
+      const saved = localStorage.getItem('portfolioData');
+      const tableBody = document.querySelector('#portfolioTable tbody');
+      tableBody.innerHTML = '';
+
+      if (saved) {
+        const data = JSON.parse(saved);
+        data.forEach(row => {
+          insertRow(row.coin, row.quantity, row.value);
+        });
+      } else {
+        insertRow('BTC', '0.005', '18000');
+        insertRow('ETH', '0.1', '12000');
+        insertRow('SOL', '10', '7500');
+      }
+    }
+
+    function insertRow(coin = '', quantity = '', value = '') {
+      const tableBody = document.querySelector('#portfolioTable tbody');
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td contenteditable="true">${coin}</td>
+        <td contenteditable="true">${quantity}</td>
+        <td contenteditable="true">${value}</td>
+        <td><button onclick="deleteRow(this)">Delete</button></td>
+      `;
+      tableBody.appendChild(row);
+    }
+
+    function addRow() {
+      insertRow();
+    }
+
+    function deleteRow(btn) {
+      btn.closest('tr').remove();
+    }
+
+    function saveTable() {
+      const rows = document.querySelectorAll('#portfolioTable tbody tr');
+      const data = [];
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        data.push({
+          coin: cells[0].innerText.trim(),
+          quantity: cells[1].innerText.trim(),
+          value: cells[2].innerText.trim()
+        });
+      });
+
+      localStorage.setItem('portfolioData', JSON.stringify(data));
+      alert('Portfolio saved!');
+    }
+
+    function clearTable() {
+      if (confirm('Are you sure you want to clear all data?')) {
+        localStorage.removeItem('portfolioData');
+        loadTable();
+      }
+    }
+
+    window.onload = loadTable;
+  </script>
 </body>
 </html>
