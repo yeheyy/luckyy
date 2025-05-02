@@ -25,7 +25,7 @@
             <th>Coin</th>
             <th>Quantity</th>
             <th>Market Value (PHP)</th>
-            <th>Avg. Price per Coin</th>
+            <th>Avg. Price</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -54,38 +54,30 @@
   </section>
 
   <footer>
-    <p>Contact me at wakitv89@gmail.com</p>
+    <p>Contact: wakitv89@gmail.com</p>
   </footer>
 
   <script>
-    function showTab(tabId) {
+    function showTab(id) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      document.querySelector(.tab-button[onclick="showTab('${tabId}')"]).classList.add('active');
-      if (tabId === 'summary') updateSummary();
+      document.getElementById(id).classList.add('active');
+      event.target.classList.add('active');
+      if (id === 'summary') updateSummary();
     }
 
     function loadTable() {
       const saved = localStorage.getItem('portfolioData');
       const tableBody = document.querySelector('#portfolioTable tbody');
       tableBody.innerHTML = '';
-
       if (saved) {
-        const data = JSON.parse(saved);
-        data.forEach(row => insertRow(row.coin, row.quantity, row.value));
-      } else {
-        insertRow('BTC', '0.005', '18000');
-        insertRow('BTC', '0.010', '32000');
-        insertRow('ETH', '0.2', '15000');
+        JSON.parse(saved).forEach(row => insertRow(row.coin, row.quantity, row.value));
       }
       updateAverages();
     }
 
     function insertRow(coin = '', quantity = '', value = '') {
-      const tableBody = document.querySelector('#portfolioTable tbody');
       const row = document.createElement('tr');
-
       row.innerHTML = `
         <td contenteditable="true" oninput="updateAverages()">${coin}</td>
         <td contenteditable="true" oninput="updateAverages()">${quantity}</td>
@@ -93,7 +85,7 @@
         <td class="avg-price">0.00</td>
         <td><button onclick="deleteRow(this)">Delete</button></td>
       `;
-      tableBody.appendChild(row);
+      document.querySelector('#portfolioTable tbody').appendChild(row);
     }
 
     function addRow() {
@@ -107,45 +99,35 @@
     }
 
     function updateAverages() {
-      const rows = document.querySelectorAll('#portfolioTable tbody tr');
       const coinData = {};
-
-      rows.forEach(row => {
+      document.querySelectorAll('#portfolioTable tbody tr').forEach(row => {
         const cells = row.querySelectorAll('td');
         const coin = cells[0].innerText.trim().toUpperCase();
-        const quantity = parseFloat(cells[1].innerText.trim());
-        const value = parseFloat(cells[2].innerText.trim());
-
-        if (!coinData[coin]) {
-          coinData[coin] = { totalQty: 0, totalVal: 0 };
-        }
-
-        if (!isNaN(quantity) && !isNaN(value)) {
-          coinData[coin].totalQty += quantity;
-          coinData[coin].totalVal += value;
+        const qty = parseFloat(cells[1].innerText.trim());
+        const val = parseFloat(cells[2].innerText.trim());
+        if (!coinData[coin]) coinData[coin] = { qty: 0, val: 0 };
+        if (!isNaN(qty) && !isNaN(val)) {
+          coinData[coin].qty += qty;
+          coinData[coin].val += val;
         }
       });
 
-      rows.forEach(row => {
+      document.querySelectorAll('#portfolioTable tbody tr').forEach(row => {
         const cells = row.querySelectorAll('td');
         const coin = cells[0].innerText.trim().toUpperCase();
         const data = coinData[coin];
-
         const avgCell = row.querySelector('.avg-price');
-        if (data.totalQty > 0) {
-          const avgPrice = data.totalVal / data.totalQty;
-          avgCell.textContent = avgPrice.toFixed(2);
+        if (data.qty > 0) {
+          avgCell.textContent = (data.val / data.qty).toFixed(2);
         } else {
-          avgCell.textContent = 'N/A';
+          avgCell.textContent = '0.00';
         }
       });
     }
 
     function saveTable() {
-      const rows = document.querySelectorAll('#portfolioTable tbody tr');
       const data = [];
-
-      rows.forEach(row => {
+      document.querySelectorAll('#portfolioTable tbody tr').forEach(row => {
         const cells = row.querySelectorAll('td');
         data.push({
           coin: cells[0].innerText.trim(),
@@ -153,28 +135,24 @@
           value: cells[2].innerText.trim()
         });
       });
-
       localStorage.setItem('portfolioData', JSON.stringify(data));
-      alert('Portfolio saved!');
+      alert('Saved!');
     }
 
     function clearTable() {
-      if (confirm('Are you sure you want to clear all data?')) {
+      if (confirm('Clear all data?')) {
         localStorage.removeItem('portfolioData');
         loadTable();
       }
     }
 
     function updateSummary() {
-      const rows = document.querySelectorAll('#portfolioTable tbody tr');
       const coinData = {};
-
-      rows.forEach(row => {
+      document.querySelectorAll('#portfolioTable tbody tr').forEach(row => {
         const cells = row.querySelectorAll('td');
         const coin = cells[0].innerText.trim().toUpperCase();
         const qty = parseFloat(cells[1].innerText.trim());
         const val = parseFloat(cells[2].innerText.trim());
-
         if (!coinData[coin]) coinData[coin] = { qty: 0, val: 0 };
         if (!isNaN(qty) && !isNaN(val)) {
           coinData[coin].qty += qty;
@@ -184,10 +162,9 @@
 
       const summaryBody = document.querySelector('#summaryTable tbody');
       summaryBody.innerHTML = '';
-
-      Object.keys(coinData).forEach(coin => {
+      for (const coin in coinData) {
         const { qty, val } = coinData[coin];
-        const avg = qty > 0 ? (val / qty).toFixed(2) : 'N/A';
+        const avg = qty > 0 ? (val / qty).toFixed(2) : '0.00';
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${coin}</td>
@@ -196,7 +173,7 @@
           <td>${avg}</td>
         `;
         summaryBody.appendChild(row);
-      });
+      }
     }
 
     window.onload = loadTable;
