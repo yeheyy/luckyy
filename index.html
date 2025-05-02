@@ -19,16 +19,12 @@
 
   <section class="portfolio">
     <h2>My Crypto Portfolio</h2>
-    <table id="crypto-table">
+    <table id="cryptoTable">
       <thead>
-        <tr>
-          <th>Coin</th>
-          <th>Quantity</th>
-          <th>Value (PHP)</th>
-        </tr>
+        <tr><th>Coin Name</th><th>Quantity</th><th>Value (PHP)</th></tr>
       </thead>
       <tbody>
-        <tr><td colspan="3">Loading data...</td></tr>
+        <tr id="loadingRow"><td colspan="3">Loading data...</td></tr>
       </tbody>
     </table>
   </section>
@@ -38,24 +34,36 @@
   </footer>
 
   <script>
-    fetch("https://opensheet.elk.sh/1Plywb7kmzQ8adg0EpmP2-c9IdQc68m5fEcs0smk0mos/1")
-      .then(response => response.json())
+    const sheetId = '1Plywb7kmzQ8adg0EpmP2-c9IdQc68m5fEcs0smk0mos';
+    const sheetName = 'Holding Summary';  // Make sure to use your correct sheet name
+    const apiUrl = https://opensheet.elk.sh/${sheetId}/${encodeURIComponent(sheetName)};
+
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(HTTP error! status: ${response.status});
+        }
+        return response.json();
+      })
       .then(data => {
-        const tbody = document.querySelector("#crypto-table tbody");
-        tbody.innerHTML = "";
+        const tbody = document.querySelector('#cryptoTable tbody');
+        tbody.innerHTML = ''; // Clear the loading row
+
         data.forEach(row => {
-          const tr = document.createElement("tr");
+          const tr = document.createElement('tr');
+          // Match the exact column headers
           tr.innerHTML = `
-            <td>${row.Coin}</td>
-            <td>${row.Quantity}</td>
-            <td>₱${parseFloat(row.Value).toLocaleString()}</td>
+            <td>${row['Coin Name']}</td>
+            <td>${row['Quantity']}</td>
+            <td>${row['Value (PHP)']}</td>
           `;
           tbody.appendChild(tr);
         });
       })
       .catch(error => {
-        document.querySelector("#crypto-table tbody").innerHTML = <tr><td colspan="3">Error loading data</td></tr>;
-        console.error("Error fetching data:", error);
+        console.error('Fetch error:', error);
+        document.querySelector('#cryptoTable tbody').innerHTML =
+          '<tr><td colspan="3">Failed to load data.</td></tr>';
       });
   </script>
 </body>
