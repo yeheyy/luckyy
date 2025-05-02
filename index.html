@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mark's Editable Crypto Portfolio</title>
+  <title>Mark's Crypto Portfolio</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -26,7 +26,7 @@
             <th>Coin</th>
             <th>Quantity</th>
             <th>Market Value (PHP)</th>
-            <th>Average Price (PHP)</th>
+            <th>Avg. Price per Coin</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -35,9 +35,6 @@
       <button onclick="addRow()">Add Asset</button>
       <button onclick="saveTable()">Save</button>
       <button onclick="clearTable()">Clear</button>
-    </div>
-    <div class="total-average">
-      <h3>Total Average Price (PHP): <span id="totalAveragePrice">0.00</span></h3>
     </div>
   </section>
 
@@ -58,10 +55,10 @@
         });
       } else {
         insertRow('BTC', '0.005', '18000');
-        insertRow('ETH', '0.1', '12000');
-        insertRow('SOL', '10', '7500');
+        insertRow('BTC', '0.010', '32000');
+        insertRow('ETH', '0.2', '15000');
       }
-      updateTotalAveragePrice();
+      updateAverages();
     }
 
     function insertRow(coin = '', quantity = '', value = '') {
@@ -69,10 +66,10 @@
       const row = document.createElement('tr');
 
       row.innerHTML = `
-        <td contenteditable="true">${coin}</td>
-        <td contenteditable="true">${quantity}</td>
-        <td contenteditable="true">${value}</td>
-        <td class="average-price">${calculateAveragePrice(quantity, value)}</td>
+        <td contenteditable="true" oninput="updateAverages()">${coin}</td>
+        <td contenteditable="true" oninput="updateAverages()">${quantity}</td>
+        <td contenteditable="true" oninput="updateAverages()">${value}</td>
+        <td class="avg-price">0.00</td>
         <td><button onclick="deleteRow(this)">Delete</button></td>
       `;
       tableBody.appendChild(row);
@@ -84,33 +81,43 @@
 
     function deleteRow(btn) {
       btn.closest('tr').remove();
-      saveTable(); // Re-save the table after delete
-      updateTotalAveragePrice();
+      updateAverages();
+      saveTable();
     }
 
-    function calculateAveragePrice(quantity, value) {
-      if (!quantity || !value || quantity <= 0) return 'N/A';
-      return (value / quantity).toFixed(2); // Returns the average price with 2 decimals
-    }
-
-    function updateTotalAveragePrice() {
+    function updateAverages() {
       const rows = document.querySelectorAll('#portfolioTable tbody tr');
-      let totalQuantity = 0;
-      let totalMarketValue = 0;
+      const coinData = {};
 
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
+        const coin = cells[0].innerText.trim().toUpperCase();
         const quantity = parseFloat(cells[1].innerText.trim());
         const value = parseFloat(cells[2].innerText.trim());
-        
+
+        if (!coinData[coin]) {
+          coinData[coin] = { totalQty: 0, totalVal: 0 };
+        }
+
         if (!isNaN(quantity) && !isNaN(value)) {
-          totalQuantity += quantity;
-          totalMarketValue += value;
+          coinData[coin].totalQty += quantity;
+          coinData[coin].totalVal += value;
         }
       });
 
-      const totalAveragePrice = totalMarketValue / totalQuantity;
-      document.getElementById('totalAveragePrice').innerText = totalAveragePrice.toFixed(2);
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const coin = cells[0].innerText.trim().toUpperCase();
+        const data = coinData[coin];
+
+        const avgCell = row.querySelector('.avg-price');
+        if (data.totalQty > 0) {
+          const avgPrice = data.totalVal / data.totalQty;
+          avgCell.textContent = avgPrice.toFixed(2);
+        } else {
+          avgCell.textContent = 'N/A';
+        }
+      });
     }
 
     function saveTable() {
@@ -122,7 +129,7 @@
         data.push({
           coin: cells[0].innerText.trim(),
           quantity: cells[1].innerText.trim(),
-          value: cells[2].innerText.trim(),
+          value: cells[2].innerText.trim()
         });
       });
 
