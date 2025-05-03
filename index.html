@@ -3,203 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mark's Crypto Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Crypto Portfolio</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <header>
-    <h1>Mark's Crypto Portfolio</h1>
-    <p>Manually track your DCA strategy in real time</p>
-  </header>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('holdings')">Holdings Summary</button>
+    <button class="tab-btn" onclick="showTab('history')">Sell History</button>
+  </div>
 
-  <nav class="tabs">
-    <button class="tab-button active" onclick="showTab('portfolio')">Portfolio Input</button>
-    <button class="tab-button" onclick="showTab('summary')">Holdings Summary</button>
-  </nav>
+  <div id="holdings" class="tab-content active">
+    <h2>Crypto Portfolio</h2>
+    <table id="portfolioTable">
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>Quantity</th>
+          <th>Market Value</th>
+          <th>Average Price</th>
+          <th>Total Cost</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="portfolioBody"></tbody>
+    </table>
+    <button onclick="addRow()">Add Coin</button>
+  </div>
 
-  <section id="portfolio" class="tab-content active">
-    <div class="table-container">
-      <table id="portfolioTable">
-        <thead>
-          <tr>
-            <th>Coin</th>
-            <th>Quantity</th>
-            <th>Market Value (PHP)</th>
-            <th>Avg. Price</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button onclick="addRow()">Add Asset</button>
-      <button onclick="saveTable()">Save to Firebase</button>
-      <button onclick="clearTable()">Clear All</button>
-    </div>
-  </section>
+  <div id="history" class="tab-content">
+    <h2>Sell History</h2>
+    <table id="historyTable">
+      <thead>
+        <tr>
+          <th>Coin</th>
+          <th>Quantity Sold</th>
+          <th>Sell Price</th>
+          <th>Total Amount</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+  </div>
 
-  <section id="summary" class="tab-content">
-    <div class="table-container">
-      <table id="summaryTable">
-        <thead>
-          <tr>
-            <th>Coin</th>
-            <th>Total Holdings</th>
-            <th>Total Value (PHP)</th>
-            <th>Avg. Price</th>
-            <th>Total Avg. Price</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
-
-  <footer>
-    <p>Contact: wakitv89@gmail.com</p>
-  </footer>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
-
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyA4l_x3YPtfWXKxxc-sHss1luxSpGt7AEI",
-      authDomain: "luckyy-58419.firebaseapp.com",
-      projectId: "luckyy-58419",
-      storageBucket: "luckyy-58419.firebasestorage.app",
-      messagingSenderId: "979791412818",
-      appId: "1:979791412818:web:5f24f91211d35311ba298b"
-    };
-
-    // Init Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    function showTab(id) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      event.target.classList.add('active');
-      if (id === 'summary') updateSummary();
-    }
-
-    function addRow(coin = '', quantity = '', value = '') {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td contenteditable="true" oninput="updateAverages()">${coin}</td>
-        <td contenteditable="true" oninput="updateAverages()">${quantity}</td>
-        <td contenteditable="true" oninput="updateAverages()">${value}</td>
-        <td class="avg-price">0.00</td>
-        <td><button onclick="deleteRow(this)">Delete</button></td>
-      `;
-      document.querySelector('#portfolioTable tbody').appendChild(row);
-    }
-
-    function deleteRow(btn) {
-      btn.closest('tr').remove();
-      updateAverages();
-      saveTable();
-    }
-
-    function updateAverages() {
-      const coinData = {};
-      document.querySelectorAll('#portfolioTable tbody tr').forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const coin = cells[0].innerText.trim().toUpperCase();
-        const qty = parseFloat(cells[1].innerText.trim());
-        const val = parseFloat(cells[2].innerText.trim());
-        if (!coinData[coin]) coinData[coin] = { qty: 0, val: 0 };
-        if (!isNaN(qty) && !isNaN(val)) {
-          coinData[coin].qty += qty;
-          coinData[coin].val += val;
-        }
-      });
-
-      document.querySelectorAll('#portfolioTable tbody tr').forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const coin = cells[0].innerText.trim().toUpperCase();
-        const data = coinData[coin];
-        const avgCell = row.querySelector('.avg-price');
-        if (data.qty > 0) {
-          avgCell.textContent = (data.val / data.qty).toFixed(2);
-        } else {
-          avgCell.textContent = '0.00';
-        }
-      });
-    }
-
-    function saveTable() {
-      db.collection("portfolio").get().then(query => {
-        query.forEach(doc => db.collection("portfolio").doc(doc.id).delete());
-      }).then(() => {
-        document.querySelectorAll('#portfolioTable tbody tr').forEach(row => {
-          const cells = row.querySelectorAll('td');
-          db.collection("portfolio").add({
-            coin: cells[0].innerText.trim(),
-            quantity: cells[1].innerText.trim(),
-            value: cells[2].innerText.trim()
-          });
-        });
-        alert("Data saved!");
-      });
-    }
-
-    function clearTable() {
-      if (confirm("Are you sure?")) {
-        db.collection("portfolio").get().then(query => {
-          query.forEach(doc => db.collection("portfolio").doc(doc.id).delete());
-        }).then(() => {
-          loadTable();
-        });
-      }
-    }
-
-    function updateSummary() {
-      const coinData = {};
-      document.querySelectorAll('#portfolioTable tbody tr').forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const coin = cells[0].innerText.trim().toUpperCase();
-        const qty = parseFloat(cells[1].innerText.trim());
-        const val = parseFloat(cells[2].innerText.trim());
-        if (!coinData[coin]) coinData[coin] = { qty: 0, val: 0 };
-        if (!isNaN(qty) && !isNaN(val)) {
-          coinData[coin].qty += qty;
-          coinData[coin].val += val;
-        }
-      });
-
-      const summaryBody = document.querySelector('#summaryTable tbody');
-      summaryBody.innerHTML = '';
-      for (const coin in coinData) {
-        const { qty, val } = coinData[coin];
-        const avg = qty > 0 ? (val / qty).toFixed(2) : '0.00';
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${coin}</td>
-          <td>${qty.toFixed(6)}</td>
-          <td>${val.toFixed(2)}</td>
-          <td>${avg}</td>
-          <td>${avg}</td>
-        `;
-        summaryBody.appendChild(row);
-      }
-    }
-
-    function loadTable() {
-      db.collection("portfolio").get().then(query => {
-        const tableBody = document.querySelector('#portfolioTable tbody');
-        tableBody.innerHTML = '';
-        query.forEach(doc => {
-          const data = doc.data();
-          addRow(data.coin, data.quantity, data.value);
-        });
-        updateAverages();
-      });
-    }
-
-    window.onload = loadTable;
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
